@@ -9,7 +9,8 @@ import 'dart:convert';
 
 String barcodeString = "";
 String stringResponse = "";
-var additives;
+String additives = "";
+String allergens = "";
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -22,13 +23,30 @@ class _MainScreenState extends State<MainScreen> {
   Future apicall() async {
     http.Response response;
     response = await http.get(Uri.parse(
-        "https://world.openfoodfacts.net/api/v2/product/7613031513062?fields=additives_tags"));
+        "https://world.openfoodfacts.net/api/v2/product/$barcodeString?fields=additives_tags,allergens"));
 
     if (response.statusCode == 200) {
       setState(() {
+        additives = "";
+
         stringResponse = response.body.toString();
-        additives = jsonDecode(stringResponse);
-        // additives = stringResponse[];
+
+        Map<String, dynamic> jsonMap = jsonDecode(stringResponse);
+        List<dynamic> additivesTags = jsonMap['product']['additives_tags'];
+        // additives = additivesTags.join(',');
+        additives = additivesTags
+            .map((additive) => additive.toString().replaceAll("en:", ""))
+            .join(',');
+        allergens = jsonMap['product']['allergens'];
+        allergens =
+            allergens.toString().replaceAll("en:", "").replaceAll("fr:", "");
+        // for (var additive in additivesTags) {
+        //   additives += ",$additive";
+        //   print(additives);
+        // }
+        print(allergens);
+
+        // additives = jsonDecode(stringResponse);
       });
     }
   }
@@ -56,7 +74,8 @@ class _MainScreenState extends State<MainScreen> {
               await apicall();
               print("hi");
               print('Scanned Barcode: $barcodeString');
-              print("Additives: " + stringResponse);
+              print("Additives: " + additives);
+              print("Allergens: " + allergens);
             },
             label: Row(
               children: const [
@@ -101,7 +120,23 @@ class _MainScreenState extends State<MainScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: primary)),
-              child: SelectableText(stringResponse,
+              child: SelectableText(additives,
+                  style: const TextStyle(fontSize: 16)),
+            ),
+            const Text(
+              "Allergens",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Container(
+              constraints: BoxConstraints(minHeight: 108),
+              alignment: Alignment.center,
+              margin: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: primary)),
+              child: SelectableText(allergens,
                   style: const TextStyle(fontSize: 16)),
             )
           ],
