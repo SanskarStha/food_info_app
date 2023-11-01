@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "289169306719",
+    "project_id": "real-food-info-app",
+    "storage_bucket": "real-food-info-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289169306719:android:b59ff716375333d2b497ea",
+        "android_client_info": {
+          "package_name": "com.example.food_info_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8Ctj3FG2KLfymzOujQ9IcYwNOxNg5l7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

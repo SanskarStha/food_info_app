@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 String barcodeString = "";
 String stringResponse = "";
@@ -59,6 +60,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final CollectionReference productInfoCollection =
+        FirebaseFirestore.instance.collection('additives');
     return Consumer<BarcodeProvider>(builder: (context, barcode, child) {
       return Scaffold(
         key: mainKey,
@@ -123,21 +126,66 @@ class _MainScreenState extends State<MainScreen> {
               child: SelectableText(additives,
                   style: const TextStyle(fontSize: 16)),
             ),
+            // const Text(
+            //   "Allergens",
+            //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            // ),
+            // Container(
+            //   constraints: BoxConstraints(minHeight: 108),
+            //   alignment: Alignment.center,
+            //   margin: const EdgeInsets.all(12),
+            //   padding: EdgeInsets.all(12),
+            //   decoration: BoxDecoration(
+            //       color: Colors.white,
+            //       borderRadius: BorderRadius.circular(12),
+            //       border: Border.all(color: primary)),
+            //   child: SelectableText(allergens,
+            //       style: const TextStyle(fontSize: 16)),
+            // ),
             const Text(
-              "Allergens",
+              "Result",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Container(
-              constraints: BoxConstraints(minHeight: 108),
-              alignment: Alignment.center,
-              margin: const EdgeInsets.all(12),
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: primary)),
-              child: SelectableText(allergens,
-                  style: const TextStyle(fontSize: 16)),
+            StreamBuilder<QuerySnapshot>(
+              stream: productInfoCollection.snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final data = snapshot.data?.docs;
+
+                  // Combine the fields into one string
+                  final combinedInfo = data!.isNotEmpty
+                      ? "Common Name: ${data.first['commonName']}\n"
+                          "Name: ${data.first['chemicalName']}\n"
+                          "Effects: ${data.first['effects']}\n"
+                          "Sources: ${data.first['sources'].join(', ')}"
+                      : 'No information found';
+                  print("data: $data");
+                  // final productDescription = data!.isNotEmpty
+                  //     ? data.first['commonName']
+                  //     : 'No product description found';
+
+                  return Container(
+                    constraints: BoxConstraints(minHeight: 108),
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: primary),
+                    ),
+                    child: SelectableText(
+                      combinedInfo,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  );
+                }
+              },
             )
           ],
         )),

@@ -42,6 +42,8 @@ dependencies:
   vibration: ^1.7.6
   openfoodfacts: ^3.0.0
   http: ^1.1.0
+  firebase_core: ^2.20.0
+  cloud_firestore: ^4.12.2
 
 dev_dependencies:
   flutter_test:
