@@ -3,7 +3,6 @@ import 'package:food_info_app/screens/splash_screen.dart';
 import 'package:food_info_app/utils/keys.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 

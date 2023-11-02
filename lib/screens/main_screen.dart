@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_info_app/main.dart';
 import 'package:food_info_app/providers/barcode_provider.dart';
 import 'package:food_info_app/utils/keys.dart';
@@ -6,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:food_info_app/screens/result_screen.dart';
 
 String barcodeString = "";
 String stringResponse = "";
@@ -75,13 +77,13 @@ class _MainScreenState extends State<MainScreen> {
               await barcode.scanBarcodeNormal();
               barcodeString = barcode.barcodeScanRes;
               await apicall();
-              print("hi");
-              print('Scanned Barcode: $barcodeString');
-              print("Additives: " + additives);
-              print("Allergens: " + allergens);
+              // print("hi");
+              // print('Scanned Barcode: $barcodeString');
+              // print("Additives: " + additives);
+              // print("Allergens: " + allergens);
             },
-            label: Row(
-              children: const [
+            label: const Row(
+              children: [
                 Icon(Icons.qr_code),
                 SizedBox(width: 6),
                 Text(
@@ -99,10 +101,10 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Container(
-              constraints: BoxConstraints(minHeight: 108),
+              constraints: const BoxConstraints(minHeight: 108),
               alignment: Alignment.center,
               margin: const EdgeInsets.all(12),
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -115,16 +117,30 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Container(
-              constraints: BoxConstraints(minHeight: 108),
+              constraints: const BoxConstraints(minHeight: 108),
               alignment: Alignment.center,
               margin: const EdgeInsets.all(12),
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: primary)),
               child: SelectableText(additives,
                   style: const TextStyle(fontSize: 16)),
+            ),
+            ElevatedButton(
+              onPressed: additives.isNotEmpty
+                  ? () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ResultScreen(
+                              additivesName: additives), // Pass additives data
+                        ),
+                      );
+                    }
+                  : null,
+              child: const Text('Results'),
             ),
             // const Text(
             //   "Allergens",
@@ -142,51 +158,53 @@ class _MainScreenState extends State<MainScreen> {
             //   child: SelectableText(allergens,
             //       style: const TextStyle(fontSize: 16)),
             // ),
-            const Text(
-              "Result",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            StreamBuilder<QuerySnapshot>(
-              stream: productInfoCollection.snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final data = snapshot.data?.docs;
+            // const Text(
+            //   "Result",
+            //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            // ),
+            // FutureBuilder<QuerySnapshot>(
+            //   future: productInfoCollection
+            //       .where('chemicalName', isEqualTo: "e322i")
+            //       .get(),
+            //   builder: (BuildContext context,
+            //       AsyncSnapshot<QuerySnapshot> snapshot) {
+            //     if (snapshot.connectionState == ConnectionState.waiting) {
+            //       return CircularProgressIndicator();
+            //     } else if (snapshot.hasError) {
+            //       return Text('Error: ${snapshot.error}');
+            //     } else {
+            //       final data = snapshot.data?.docs;
 
-                  // Combine the fields into one string
-                  final combinedInfo = data!.isNotEmpty
-                      ? "Common Name: ${data.first['commonName']}\n"
-                          "Name: ${data.first['chemicalName']}\n"
-                          "Effects: ${data.first['effects']}\n"
-                          "Sources: ${data.first['sources'].join(', ')}"
-                      : 'No information found';
-                  print("data: $data");
-                  // final productDescription = data!.isNotEmpty
-                  //     ? data.first['commonName']
-                  //     : 'No product description found';
+            //       // Combine the fields into one string
+            //       final combinedInfo = data!.isNotEmpty
+            //           ? "Common Name: ${data.first['commonName']}\n"
+            //               "Name: ${data.first['chemicalName']}\n"
+            //               "Effects: ${data.first['effects']}\n"
+            //               "Sources: ${data.first['sources'].join(', ')}"
+            //           : 'No information found';
+            //       print("data: $data");
+            //       // final productDescription = data!.isNotEmpty
+            //       //     ? data.first['commonName']
+            //       //     : 'No product description found';
 
-                  return Container(
-                    constraints: BoxConstraints(minHeight: 108),
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.all(12),
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: primary),
-                    ),
-                    child: SelectableText(
-                      combinedInfo,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  );
-                }
-              },
-            )
+            //       return Container(
+            //         constraints: BoxConstraints(minHeight: 108),
+            //         alignment: Alignment.center,
+            //         margin: const EdgeInsets.all(12),
+            //         padding: EdgeInsets.all(12),
+            //         decoration: BoxDecoration(
+            //           color: Colors.white,
+            //           borderRadius: BorderRadius.circular(12),
+            //           border: Border.all(color: primary),
+            //         ),
+            //         child: SelectableText(
+            //           combinedInfo,
+            //           style: const TextStyle(fontSize: 16),
+            //         ),
+            //       );
+            //     }
+            //   },
+            // )
           ],
         )),
       );
