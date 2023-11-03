@@ -1,7 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:food_info_app/utils/keys.dart';
 import 'package:food_info_app/widgets/drawer_main.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 String barcodeString = "";
 String stringResponse = "";
@@ -19,7 +21,15 @@ class ResultScreen extends StatefulWidget {
 }
 
 class _ResultScreenState extends State<ResultScreen> {
-  Future apicall() async {}
+  Future<void> launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }
 
   @override
   void initState() {
@@ -43,9 +53,10 @@ class _ResultScreenState extends State<ResultScreen> {
           child: ListView.builder(
               itemCount: widget.additives.length,
               itemBuilder: (context, index) {
+                final chemicalName = widget.additives[index];
                 return FutureBuilder<QuerySnapshot>(
                   future: productInfoCollection
-                      .where('chemicalName', isEqualTo: widget.additives[index])
+                      .where('chemicalName', isEqualTo: chemicalName)
                       .get(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -60,13 +71,13 @@ class _ResultScreenState extends State<ResultScreen> {
                         final chemicalName = data.first['chemicalName'];
                         final effects = data.first['effects'];
                         final sources = data.first['sources'];
-                        print("data: $data");
-                        // final productDescription = data!.isNotEmpty
-                        //     ? data.first['commonName']
-                        //     : 'No product description found';
+                        final harmful = data.first['harmful'];
 
                         return Card(
-                          color: Colors.green, // Set the card color to green
+                          color: harmful
+                              ? Colors.yellow
+                              : Colors
+                                  .green, // Set the card color based on the 'harmful' value
                           elevation: 4,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -77,16 +88,6 @@ class _ResultScreenState extends State<ResultScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  "Common Name:",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(commonName,
-                                    style: const TextStyle(fontSize: 16)),
-                                const SizedBox(height: 16),
-                                const Text(
                                   "Chemical Name:",
                                   style: TextStyle(
                                     fontSize: 18,
@@ -94,6 +95,16 @@ class _ResultScreenState extends State<ResultScreen> {
                                   ),
                                 ),
                                 Text(chemicalName,
+                                    style: const TextStyle(fontSize: 16)),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  "Common Name:",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(commonName,
                                     style: const TextStyle(fontSize: 16)),
                                 const SizedBox(height: 16),
                                 const Text(
@@ -113,14 +124,105 @@ class _ResultScreenState extends State<ResultScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Text(sources.join(', '),
-                                    style: const TextStyle(fontSize: 16)),
+                                RichText(
+                                  text: TextSpan(
+                                    children: sources.map<InlineSpan>((source) {
+                                      if (source is String) {
+                                        return TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: source,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Color.fromARGB(255, 5,
+                                                    80, 141), // Link color
+                                                decoration:
+                                                    TextDecoration.underline,
+                                              ),
+                                              recognizer: TapGestureRecognizer()
+                                                ..onTap = () {
+                                                  // Handle the URL click event here, e.g., open the URL in a browser
+                                                  launchURL(source);
+                                                },
+                                            ),
+                                            const TextSpan(
+                                                text: '\n'), // Add a line break
+                                          ],
+                                        );
+                                      } else {
+                                        // Handle cases where the source is not a string, e.g., you can display an error message.
+                                        return const TextSpan(
+                                          text: 'Invalid URL',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    }).toList(),
+                                  ),
+                                )
                               ],
                             ),
                           ),
                         );
                       } else {
-                        return Text('No data found');
+                        return Card(
+                          color: Colors
+                              .grey, // Set the card color based on the 'harmful' value
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Chemical Name:",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(chemicalName,
+                                    style: const TextStyle(fontSize: 16)),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  "Common Name:",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Text("Unknown",
+                                    style: TextStyle(fontSize: 16)),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  "Effects:",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Text("Unknown",
+                                    style: TextStyle(fontSize: 16)),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  "Sources:",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Text("Unknown",
+                                    style: TextStyle(fontSize: 16)),
+                                const SizedBox(height: 16),
+                              ],
+                            ),
+                          ),
+                        );
                       }
                     }
                   },

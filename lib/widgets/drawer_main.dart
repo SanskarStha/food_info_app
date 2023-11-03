@@ -18,7 +18,7 @@ class DrawerMain extends StatelessWidget {
                   alignment: Alignment.center,
                   color: primary,
                   child: const Text(
-                    "Barcode & QRcode Scanner",
+                    "Food Info",
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 )),

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_info_app/main.dart';
 import 'package:food_info_app/providers/barcode_provider.dart';
 import 'package:food_info_app/utils/keys.dart';
@@ -7,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_info_app/screens/result_screen.dart';
 
 String barcodeString = "";
 String stringResponse = "";
 String additives = "";
 String allergens = "";
+String productStatus = "";
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -31,10 +30,10 @@ class _MainScreenState extends State<MainScreen> {
     if (response.statusCode == 200) {
       setState(() {
         additives = "";
-
+        productStatus = "";
         stringResponse = response.body.toString();
-
         Map<String, dynamic> jsonMap = jsonDecode(stringResponse);
+        productStatus = jsonMap['status_verbose'];
         List<dynamic> additivesTags = jsonMap['product']['additives_tags'];
         // additives = additivesTags.join(',');
         additives = additivesTags
@@ -43,13 +42,6 @@ class _MainScreenState extends State<MainScreen> {
         allergens = jsonMap['product']['allergens'];
         allergens =
             allergens.toString().replaceAll("en:", "").replaceAll("fr:", "");
-        // for (var additive in additivesTags) {
-        //   additives += ",$additive";
-        //   print(additives);
-        // }
-        print(allergens);
-
-        // additives = jsonDecode(stringResponse);
       });
     }
   }
@@ -62,14 +54,12 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final CollectionReference productInfoCollection =
-        FirebaseFirestore.instance.collection('additives');
     return Consumer<BarcodeProvider>(builder: (context, barcode, child) {
       return Scaffold(
         key: mainKey,
         drawer: const DrawerMain(),
         appBar: AppBar(
-          title: const Text("Barcode & QRcode Scanner"),
+          title: const Text("Food Info"),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(
@@ -77,10 +67,6 @@ class _MainScreenState extends State<MainScreen> {
               await barcode.scanBarcodeNormal();
               barcodeString = barcode.barcodeScanRes;
               await apicall();
-              // print("hi");
-              // print('Scanned Barcode: $barcodeString');
-              // print("Additives: " + additives);
-              // print("Allergens: " + allergens);
             },
             label: const Row(
               children: [
@@ -125,8 +111,11 @@ class _MainScreenState extends State<MainScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: primary)),
-              child: SelectableText(additives,
-                  style: const TextStyle(fontSize: 16)),
+              child: additives.isEmpty && productStatus == "product found"
+                  ? const Text("No Additives found",
+                      style: TextStyle(fontSize: 16))
+                  : SelectableText(additives,
+                      style: const TextStyle(fontSize: 16)),
             ),
             ElevatedButton(
               onPressed: additives.isNotEmpty
@@ -142,69 +131,6 @@ class _MainScreenState extends State<MainScreen> {
                   : null,
               child: const Text('Results'),
             ),
-            // const Text(
-            //   "Allergens",
-            //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            // ),
-            // Container(
-            //   constraints: BoxConstraints(minHeight: 108),
-            //   alignment: Alignment.center,
-            //   margin: const EdgeInsets.all(12),
-            //   padding: EdgeInsets.all(12),
-            //   decoration: BoxDecoration(
-            //       color: Colors.white,
-            //       borderRadius: BorderRadius.circular(12),
-            //       border: Border.all(color: primary)),
-            //   child: SelectableText(allergens,
-            //       style: const TextStyle(fontSize: 16)),
-            // ),
-            // const Text(
-            //   "Result",
-            //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            // ),
-            // FutureBuilder<QuerySnapshot>(
-            //   future: productInfoCollection
-            //       .where('chemicalName', isEqualTo: "e322i")
-            //       .get(),
-            //   builder: (BuildContext context,
-            //       AsyncSnapshot<QuerySnapshot> snapshot) {
-            //     if (snapshot.connectionState == ConnectionState.waiting) {
-            //       return CircularProgressIndicator();
-            //     } else if (snapshot.hasError) {
-            //       return Text('Error: ${snapshot.error}');
-            //     } else {
-            //       final data = snapshot.data?.docs;
-
-            //       // Combine the fields into one string
-            //       final combinedInfo = data!.isNotEmpty
-            //           ? "Common Name: ${data.first['commonName']}\n"
-            //               "Name: ${data.first['chemicalName']}\n"
-            //               "Effects: ${data.first['effects']}\n"
-            //               "Sources: ${data.first['sources'].join(', ')}"
-            //           : 'No information found';
-            //       print("data: $data");
-            //       // final productDescription = data!.isNotEmpty
-            //       //     ? data.first['commonName']
-            //       //     : 'No product description found';
-
-            //       return Container(
-            //         constraints: BoxConstraints(minHeight: 108),
-            //         alignment: Alignment.center,
-            //         margin: const EdgeInsets.all(12),
-            //         padding: EdgeInsets.all(12),
-            //         decoration: BoxDecoration(
-            //           color: Colors.white,
-            //           borderRadius: BorderRadius.circular(12),
-            //           border: Border.all(color: primary),
-            //         ),
-            //         child: SelectableText(
-            //           combinedInfo,
-            //           style: const TextStyle(fontSize: 16),
-            //         ),
-            //       );
-            //     }
-            //   },
-            // )
           ],
         )),
       );
