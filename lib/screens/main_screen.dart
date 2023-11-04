@@ -23,27 +23,38 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   Future apicall() async {
+    additives = "";
+    productStatus = "";
     http.Response response;
+
     response = await http.get(Uri.parse(
         "https://world.openfoodfacts.net/api/v2/product/$barcodeString?fields=additives_tags,allergens"));
 
     if (response.statusCode == 200) {
       setState(() {
-        additives = "";
-        productStatus = "";
         stringResponse = response.body.toString();
         Map<String, dynamic> jsonMap = jsonDecode(stringResponse);
         productStatus = jsonMap['status_verbose'];
-        List<dynamic> additivesTags = jsonMap['product']['additives_tags'];
-        // additives = additivesTags.join(',');
-        additives = additivesTags
-            .map((additive) => additive.toString().replaceAll("en:", ""))
-            .join(',');
-        allergens = jsonMap['product']['allergens'];
-        allergens =
-            allergens.toString().replaceAll("en:", "").replaceAll("fr:", "");
+
+        if (productStatus == "product found") {
+          List<dynamic> additivesTags = jsonMap['product']['additives_tags'];
+          // additives = additivesTags.join(',');
+          additives = additivesTags
+              .map((additive) => additive.toString().replaceAll("en:", ""))
+              .join(',');
+          print("additives: $additives");
+          // allergens = jsonMap['product']['allergens'];
+          // allergens =
+          //     allergens.toString().replaceAll("en:", "").replaceAll("fr:", "");
+        }
+      });
+    } else {
+      setState(() {
+        productStatus = "product not found";
       });
     }
+    print("barcode: $barcodeString");
+    print("product status: $productStatus");
   }
 
   @override
@@ -114,8 +125,13 @@ class _MainScreenState extends State<MainScreen> {
               child: additives.isEmpty && productStatus == "product found"
                   ? const Text("No Additives found",
                       style: TextStyle(fontSize: 16))
-                  : SelectableText(additives,
-                      style: const TextStyle(fontSize: 16)),
+                  : productStatus == "product not found"
+                      ? const Text(
+                          "Product not found",
+                          style: TextStyle(fontSize: 16),
+                        )
+                      : SelectableText(additives,
+                          style: const TextStyle(fontSize: 16)),
             ),
             ElevatedButton(
               onPressed: additives.isNotEmpty
