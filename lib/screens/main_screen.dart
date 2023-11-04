@@ -8,12 +8,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:food_info_app/screens/result_screen.dart';
 
-String barcodeString = "";
-String stringResponse = "";
-String additives = "";
-String allergens = "";
-String productStatus = "";
-
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -22,6 +16,12 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  String barcodeString = "";
+  String stringResponse = "";
+  String additives = "";
+  String allergens = "";
+  String productStatus = "";
+
   Future apicall() async {
     additives = "";
     productStatus = "";
@@ -53,8 +53,6 @@ class _MainScreenState extends State<MainScreen> {
         productStatus = "product not found";
       });
     }
-    print("barcode: $barcodeString");
-    print("product status: $productStatus");
   }
 
   @override
@@ -94,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "Scanned Code",
+              "Scanned Barcode",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Container(
@@ -106,7 +104,7 @@ class _MainScreenState extends State<MainScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: primary)),
-              child: SelectableText(barcode.barcodeScanRes,
+              child: SelectableText(barcodeString,
                   style: const TextStyle(fontSize: 16)),
             ),
             const Text(
