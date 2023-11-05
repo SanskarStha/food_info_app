@@ -73,6 +73,7 @@ class _ResultScreenState extends State<ResultScreen> {
                         if (data != null && data.isNotEmpty) {
                           final commonName = data.first['commonName'];
                           final chemicalName = data.first['chemicalName'];
+                          final description = data.first['description'];
                           final effects = data.first['effects'];
                           final sources = data.first['sources'];
                           final harmful = data.first['harmful'];
@@ -109,6 +110,16 @@ class _ResultScreenState extends State<ResultScreen> {
                                     ),
                                   ),
                                   Text(commonName,
+                                      style: const TextStyle(fontSize: 16)),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    "Description:",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(description,
                                       style: const TextStyle(fontSize: 16)),
                                   const SizedBox(height: 16),
                                   const Text(
