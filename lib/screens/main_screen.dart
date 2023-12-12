@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_info_app/main.dart';
 import 'package:food_info_app/providers/barcode_provider.dart';
+import 'package:food_info_app/screens/signin_screen.dart';
 import 'package:food_info_app/utils/keys.dart';
 import 'package:food_info_app/widgets/drawer_main.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +63,22 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
   }
 
+  void logout() {
+    // Implement your logout logic here
+    // For example, sign out the user and navigate to the login screen
+    // FirebaseAuth.instance.signOut();
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => LoginScreen()),
+    // );
+
+    FirebaseAuth.instance.signOut().then((value) {
+      print("Signed Out");
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SignInScreen()));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<BarcodeProvider>(builder: (context, barcode, child) {
@@ -69,6 +87,12 @@ class _MainScreenState extends State<MainScreen> {
         drawer: const DrawerMain(),
         appBar: AppBar(
           title: const Text("Food Info"),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: logout,
+            ),
+          ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(

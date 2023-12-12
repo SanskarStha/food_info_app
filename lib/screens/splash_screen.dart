@@ -1,6 +1,7 @@
 import 'package:food_info_app/providers/all_providers.dart';
 import 'package:food_info_app/screens/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:food_info_app/screens/signin_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
           .then((value) => Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => const MainScreen(),
+                builder: (context) => const SignInScreen(),
               ),
               (route) => false));
     });
