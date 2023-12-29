@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:food_info_app/screens/main_screen.dart';
+import 'package:food_info_app/screens/profile_page.dart';
 import 'package:food_info_app/utils/keys.dart';
 import 'package:food_info_app/widgets/drawer_main.dart';
 import 'package:flutter/material.dart';
@@ -40,13 +42,27 @@ class _ResultScreenState extends State<ResultScreen> {
     widget.additives = widget.additivesName.split(',');
   }
 
+  void goToProfilePage() {
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ProfilePage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final CollectionReference productInfoCollection =
         FirebaseFirestore.instance.collection('additives');
     return Scaffold(
       key: mainKey,
-      drawer: const DrawerMain(),
+      drawer: DrawerMain(
+        onProfileTap: goToProfilePage,
+        onSignOut: FirebaseAuth.instance.signOut,
+      ),
       appBar: AppBar(
         title: const Text("Results"),
       ),

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_info_app/main.dart';
 import 'package:food_info_app/providers/barcode_provider.dart';
+import 'package:food_info_app/screens/profile_page.dart';
 import 'package:food_info_app/screens/signin_screen.dart';
 import 'package:food_info_app/utils/keys.dart';
 import 'package:food_info_app/widgets/drawer_main.dart';
@@ -9,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:food_info_app/screens/result_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -23,32 +25,58 @@ class _MainScreenState extends State<MainScreen> {
   String additives = "";
   String allergens = "";
   String productStatus = "";
+  final user = FirebaseAuth.instance.currentUser!;
+
+  // Future apicall() async {
+  //   additives = "";
+  //   productStatus = "";
+  //   http.Response response;
+
+  //   response = await http.get(Uri.parse(
+  //       "https://world.openfoodfacts.net/api/v2/product/$barcodeString?fields=additives_tags,allergens"));
+
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       stringResponse = response.body.toString();
+  //       Map<String, dynamic> jsonMap = jsonDecode(stringResponse);
+  //       productStatus = jsonMap['status_verbose'];
+
+  //       if (productStatus == "product found") {
+  //         List<dynamic> additivesTags = jsonMap['product']['additives_tags'];
+  //         // additives = additivesTags.join(',');
+  //         additives = additivesTags
+  //             .map((additive) => additive.toString().replaceAll("en:", ""))
+  //             .join(',');
+  //         print("additives: $additives");
+  //         // allergens = jsonMap['product']['allergens'];
+  //         // allergens =
+  //         //     allergens.toString().replaceAll("en:", "").replaceAll("fr:", "");
+  //       }
+  //     });
+  //   } else {
+  //     setState(() {
+  //       productStatus = "product not found";
+  //     });
+  //   }
+  // }
 
   Future apicall() async {
     additives = "";
     productStatus = "";
-    http.Response response;
+    barcodeString = "5449000214911";
 
-    response = await http.get(Uri.parse(
-        "https://world.openfoodfacts.net/api/v2/product/$barcodeString?fields=additives_tags,allergens"));
+    final QuerySnapshot productQuerySnapshot = await FirebaseFirestore.instance
+        .collection('products')
+        .where('barcode', isEqualTo: barcodeString)
+        .get();
 
-    if (response.statusCode == 200) {
+    if (productQuerySnapshot.docs.isNotEmpty) {
+      final DocumentSnapshot productSnapshot = productQuerySnapshot.docs.first;
       setState(() {
-        stringResponse = response.body.toString();
-        Map<String, dynamic> jsonMap = jsonDecode(stringResponse);
-        productStatus = jsonMap['status_verbose'];
-
-        if (productStatus == "product found") {
-          List<dynamic> additivesTags = jsonMap['product']['additives_tags'];
-          // additives = additivesTags.join(',');
-          additives = additivesTags
-              .map((additive) => additive.toString().replaceAll("en:", ""))
-              .join(',');
-          print("additives: $additives");
-          // allergens = jsonMap['product']['allergens'];
-          // allergens =
-          //     allergens.toString().replaceAll("en:", "").replaceAll("fr:", "");
-        }
+        List<dynamic> additivesList =
+            (productSnapshot.data() as Map<String, dynamic>)['additives'];
+        additives = additivesList.join(',');
+        productStatus = "product found";
       });
     } else {
       setState(() {
@@ -63,36 +91,36 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
   }
 
-  void logout() {
-    // Implement your logout logic here
-    // For example, sign out the user and navigate to the login screen
-    // FirebaseAuth.instance.signOut();
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => LoginScreen()),
-    // );
+  void goToProfilePage() {
+    Navigator.pop(context);
 
-    FirebaseAuth.instance.signOut().then((value) {
-      print("Signed Out");
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => SignInScreen()));
-    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ProfilePage(),
+      ),
+    );
   }
+
+  // void logout() {
+  //   FirebaseAuth.instance.signOut().then((value) {
+  //     print("Signed Out");
+  //     Navigator.push(
+  //         context, MaterialPageRoute(builder: (context) => SignInScreen()));
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<BarcodeProvider>(builder: (context, barcode, child) {
       return Scaffold(
         key: mainKey,
-        drawer: const DrawerMain(),
+        drawer: DrawerMain(
+          onProfileTap: goToProfilePage,
+          onSignOut: FirebaseAuth.instance.signOut,
+        ),
         appBar: AppBar(
           title: const Text("Food Info"),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: logout,
-            ),
-          ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(

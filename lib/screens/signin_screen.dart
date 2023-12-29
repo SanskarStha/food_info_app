@@ -6,7 +6,9 @@ import 'package:food_info_app/screens/signup_screen.dart';
 import 'package:food_info_app/utils/color_utils.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  final VoidCallback showRegisterPage;
+  const SignInScreen({Key? key, required this.showRegisterPage})
+      : super(key: key);
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -15,6 +17,20 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   TextEditingController _passwordTextController = TextEditingController();
   TextEditingController _emailTextController = TextEditingController();
+
+  Future signIn() async {
+    await FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: _emailTextController.text.trim(),
+            password: _passwordTextController.text.trim())
+        .then((value) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MainScreen()));
+    }).onError((error, stackTrace) {
+      print("Error ${error.toString()}");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,16 +61,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 20,
                 ),
                 signInSignUpButton(context, true, () {
-                  FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                          email: _emailTextController.text,
-                          password: _passwordTextController.text)
-                      .then((value) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MainScreen()));
-                  }).onError((error, stackTrace) {
-                    print("Error ${error.toString()}");
-                  });
+                  signIn();
                 }),
                 signUpOption()
               ],
@@ -72,10 +79,10 @@ class _SignInScreenState extends State<SignInScreen> {
         const Text("Don't have account?",
             style: TextStyle(color: Colors.white70)),
         GestureDetector(
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SignUpScreen()));
-          },
+          onTap: widget.showRegisterPage,
+          // Navigator.push(context,
+          //     MaterialPageRoute(builder: (context) => SignUpScreen()));
+
           child: const Text(
             " Sign Up",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),

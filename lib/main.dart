@@ -1,4 +1,5 @@
 import 'package:food_info_app/providers/all_providers.dart';
+import 'package:food_info_app/auth/main_page.dart';
 import 'package:food_info_app/screens/splash_screen.dart';
 import 'package:food_info_app/utils/keys.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: primary,
       ),
-      home: const SplashScreen(),
+      home: const MainPage(),
     );
   }
 }

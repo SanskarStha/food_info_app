@@ -1,3 +1,4 @@
+import 'package:food_info_app/auth/main_page.dart';
 import 'package:food_info_app/providers/all_providers.dart';
 import 'package:food_info_app/screens/main_screen.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
           .then((value) => Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => const SignInScreen(),
+                builder: (context) => const MainPage(),
               ),
               (route) => false));
     });
