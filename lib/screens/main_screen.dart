@@ -63,7 +63,6 @@ class _MainScreenState extends State<MainScreen> {
   Future apicall() async {
     additives = "";
     productStatus = "";
-    barcodeString = "5449000214911";
 
     final QuerySnapshot productQuerySnapshot = await FirebaseFirestore.instance
         .collection('products')
