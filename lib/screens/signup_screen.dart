@@ -23,6 +23,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // TextEditingController _confirmPasswordTextController = TextEditingController();
   TextEditingController _userNameTextController = TextEditingController();
   TextEditingController _ageTextController = TextEditingController();
+  bool isVegan = false;
+  bool isVegetarian = false;
+  bool isLactoseIntolerant = false;
+  bool hasNutAllergy = false;
 
   @override
   Future signUp() async {
@@ -42,17 +46,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     // add user details
     addUserDetails(
-      _userNameTextController.text.trim(),
-      int.parse(_ageTextController.text.trim()),
-      _emailTextController.text.trim(),
-    );
+        _userNameTextController.text.trim(),
+        int.parse(_ageTextController.text.trim()),
+        _emailTextController.text.trim(),
+        isVegan,
+        isVegetarian,
+        isLactoseIntolerant,
+        hasNutAllergy);
   }
 
-  Future addUserDetails(String userName, int age, String email) async {
+  Future addUserDetails(String userName, int age, String email, bool isVegan,
+      bool isVegetarian, bool isLactoseIntolerant, bool hasNutAllergy) async {
     await FirebaseFirestore.instance.collection('users').add({
       'username': userName,
       'age': age,
       'email': email,
+      'vegan': isVegan ? 'true' : 'false',
+      'vegetarian': isVegetarian ? 'true' : 'false',
+      'lactose intolerant': isLactoseIntolerant ? 'true' : 'false',
+      'nut allergy': hasNutAllergy ? 'true' : 'false'
     });
   }
 
@@ -115,6 +127,55 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // ),
                 // reusableTextField("Re-Enter Password", Icons.lock_outline,
                 //     false, _confirmPasswordTextController),
+                const SizedBox(height: 20),
+                CheckboxListTile(
+                  title: Text(
+                    'Vegan',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  value: isVegan,
+                  onChanged: (newValue) {
+                    setState(() {
+                      isVegan = newValue!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: Text(
+                    'Vegetarian',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  value: isVegetarian,
+                  onChanged: (newValue) {
+                    setState(() {
+                      isVegetarian = newValue!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: Text(
+                    'Lactose Intolerant',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  value: isLactoseIntolerant,
+                  onChanged: (newValue) {
+                    setState(() {
+                      isLactoseIntolerant = newValue!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: Text(
+                    'Nut Allergy',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  value: hasNutAllergy,
+                  onChanged: (newValue) {
+                    setState(() {
+                      hasNutAllergy = newValue!;
+                    });
+                  },
+                ),
                 const SizedBox(
                   height: 20,
                 ),
