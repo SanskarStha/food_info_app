@@ -93,6 +93,10 @@ class _ResultScreenState extends State<ResultScreen> {
                           final effects = data.first['effects'];
                           final sources = data.first['sources'];
                           final harmful = data.first['harmful'];
+                          final isVegan = data.first['isVegan'];
+                          final isVegetarian = data.first['isVegetarian'];
+                          final hasLactose = data.first['hasLactose'];
+                          final hasNuts = data.first['hasNuts'];
 
                           return Card(
                             color: harmful
@@ -147,6 +151,35 @@ class _ResultScreenState extends State<ResultScreen> {
                                   ),
                                   Text(effects,
                                       style: const TextStyle(fontSize: 16)),
+                                  const SizedBox(height: 16),
+                                  if (!isVegan)
+                                    Text(
+                                      "$chemicalName contains non-vegan ingredient.",
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  if (!isVegetarian)
+                                    Text(
+                                      "$chemicalName contains non-vegetarian ingredient.",
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  if (hasLactose)
+                                    Text(
+                                      "$chemicalName contains milk products.",
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  if (hasNuts)
+                                    Text(
+                                      "$chemicalName contains nuts",
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   const SizedBox(height: 16),
                                   const Text(
                                     "Sources:",
