@@ -65,7 +65,22 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
                   if (snapshot.hasData) {
                     _initCameraController(snapshot.data!);
 
-                    return Center(child: CameraPreview(_cameraController!));
+                    // return Center(child: CameraPreview(_cameraController!));
+
+                    return Center(
+                      child: Container(
+                        width: 350, // Set the desired width of the bounding box
+                        height:
+                            500, // Set the desired height of the bounding box
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.red,
+                            width: 2.0,
+                          ),
+                        ),
+                        child: CameraPreview(_cameraController!),
+                      ),
+                    );
                   } else {
                     return const LinearProgressIndicator();
                   }
