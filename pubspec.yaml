@@ -46,6 +46,9 @@ dependencies:
   cloud_firestore: ^4.12.2
   url_launcher: ^6.2.1
   firebase_auth: ^4.15.3
+  camera: ^0.10.5+9
+  google_mlkit_text_recognition: ^0.11.0
+  permission_handler: ^11.0.1
 
 dev_dependencies:
   flutter_test:

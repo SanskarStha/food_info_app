@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_info_app/main.dart';
 import 'package:food_info_app/providers/barcode_provider.dart';
+import 'package:food_info_app/screens/ocrscan_screen.dart';
 import 'package:food_info_app/screens/profile_page.dart';
 import 'package:food_info_app/screens/signin_screen.dart';
 import 'package:food_info_app/utils/keys.dart';
@@ -121,23 +122,73 @@ class _MainScreenState extends State<MainScreen> {
         appBar: AppBar(
           title: const Text("Food Info"),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: FloatingActionButton.extended(
-            onPressed: () async {
-              await barcode.scanBarcodeNormal();
-              barcodeString = barcode.barcodeScanRes;
-              await apicall();
-            },
-            label: const Row(
-              children: [
-                Icon(Icons.qr_code),
-                SizedBox(width: 6),
-                Text(
-                  "Scan",
-                  style: TextStyle(fontSize: 16),
-                )
-              ],
-            )),
+
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        // floatingActionButton: FloatingActionButton.extended(
+        //     onPressed: () async {
+        //       await barcode.scanBarcodeNormal();
+        //       barcodeString = barcode.barcodeScanRes;
+        //       await apicall();
+        //     },
+        //     label: const Row(
+        //       children: [
+        //         Icon(Icons.qr_code),
+        //         SizedBox(width: 6),
+        //         Text(
+        //           "Scan",
+        //           style: TextStyle(fontSize: 16),
+        //         )
+        //       ],
+        //     )),
+
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(left: 25, bottom: 50),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FloatingActionButton.extended(
+                  onPressed: () async {
+                    await barcode.scanBarcodeNormal();
+                    barcodeString = barcode.barcodeScanRes;
+                    await apicall();
+                  },
+                  label: const Row(
+                    children: [
+                      Icon(Icons.qr_code),
+                      SizedBox(width: 6),
+                      Text(
+                        "Barcode Scan",
+                        style: TextStyle(fontSize: 16),
+                      )
+                    ],
+                  )),
+              const SizedBox(
+                  width:
+                      10), // Adjust the spacing between the buttons as needed
+              FloatingActionButton.extended(
+                  onPressed: () async {
+                    // Functionality for the second button
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const OCRScanScreen(),
+                      ),
+                    );
+                  },
+                  label: const Row(
+                    children: [
+                      Icon(Icons.qr_code),
+                      SizedBox(width: 6),
+                      Text(
+                        "OCR Scan",
+                        style: TextStyle(fontSize: 16),
+                      )
+                    ],
+                  )),
+            ],
+          ),
+        ),
+
         body: SafeArea(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
