@@ -24,8 +24,8 @@ class _SignInScreenState extends State<SignInScreen> {
             email: _emailTextController.text.trim(),
             password: _passwordTextController.text.trim())
         .then((value) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MainScreen()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => MainScreen(text: "")));
     }).onError((error, stackTrace) {
       print("Error ${error.toString()}");
     });

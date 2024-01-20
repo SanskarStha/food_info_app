@@ -302,7 +302,7 @@ class _ResultScreenState extends State<ResultScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MainScreen(),
+                    builder: (context) => MainScreen(text: ""),
                   ),
                 ); // Navigate back to MainScreen
               },

@@ -14,7 +14,9 @@ import 'package:food_info_app/screens/result_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final String text;
+  String OCRText = "";
+  MainScreen({super.key, required this.text});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -64,6 +66,7 @@ class _MainScreenState extends State<MainScreen> {
   Future apicall() async {
     additives = "";
     productStatus = "";
+    widget.OCRText = "";
 
     final QuerySnapshot productQuerySnapshot = await FirebaseFirestore.instance
         .collection('products')
@@ -89,6 +92,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     // apicall();
     super.initState();
+    widget.OCRText = widget.text;
   }
 
   void goToProfilePage() {
@@ -222,16 +226,21 @@ class _MainScreenState extends State<MainScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: primary)),
-              child: additives.isEmpty && productStatus == "product found"
-                  ? const Text("No Additives found",
-                      style: TextStyle(fontSize: 16))
-                  : productStatus == "product not found"
-                      ? const Text(
-                          "Product not found",
-                          style: TextStyle(fontSize: 16),
-                        )
-                      : SelectableText(additives,
-                          style: const TextStyle(fontSize: 16)),
+              child: widget.OCRText != ""
+                  ? SelectableText(
+                      widget.OCRText,
+                      style: const TextStyle(fontSize: 16),
+                    )
+                  : additives.isEmpty && productStatus == "product found"
+                      ? const Text("No Additives found",
+                          style: TextStyle(fontSize: 16))
+                      : productStatus == "product not found"
+                          ? const Text(
+                              "Product not found",
+                              style: TextStyle(fontSize: 16),
+                            )
+                          : SelectableText(additives,
+                              style: const TextStyle(fontSize: 16)),
             ),
             ElevatedButton(
               onPressed: additives.isNotEmpty

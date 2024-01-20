@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:food_info_app/screens/main_screen.dart';
 import 'package:food_info_app/screens/ocrresult_screen.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -193,7 +194,7 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
       await navigator.push(
         MaterialPageRoute(
           builder: (BuildContext context) =>
-              OCRResultScreen(text: recognizedText.text),
+              MainScreen(text: recognizedText.text),
         ),
       );
     } catch (e) {
