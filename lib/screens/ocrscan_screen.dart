@@ -210,10 +210,11 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
       //   print("No text blocks found.");
       // }
 
-      int ingredientsStart = recognizedTextString.indexOf('INGREDIENTS:');
+      int ingredientsStart =
+          recognizedTextString.toLowerCase().indexOf('ingredients');
       if (ingredientsStart >= 0) {
         ingredients = recognizedTextString
-            .substring(ingredientsStart + 'INGREDIENTS:'.length)
+            .substring(ingredientsStart + 'ingredients'.length)
             .trim();
         print(ingredients);
 
@@ -224,7 +225,8 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
         List<String> additives = [];
         for (Match m in matches) {
           String? additive = m.group(0);
-          additives.add(additive!);
+          additives
+              .add('E${additive!}'); // 'E' is added before each additive number
         }
         allAdditives = additives.join(', ');
         print('Additives found: $allAdditives');
