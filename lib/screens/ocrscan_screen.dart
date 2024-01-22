@@ -190,17 +190,55 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
 
       final inputImage = InputImage.fromFile(file);
       final recognizedText = await textRecognizer.processImage(inputImage);
+      String recognizedTextString = recognizedText.text;
+      String ingredients = '';
+
+      // String firstBlockText = '';
+      // if (recognizedText.blocks.isNotEmpty) {
+      //   TextBlock firstBlock = recognizedText.blocks[1];
+
+      //   for (TextLine line in firstBlock.lines) {
+      //     for (TextElement element in line.elements) {
+      //       firstBlockText += element.text + '';
+      //     }
+      //     firstBlockText += '\n';
+      //   }
+
+      //   print("First block text: $firstBlockText");
+      // } else {
+      //   print("No text blocks found.");
+      // }
+
+      int ingredientsStart = recognizedTextString.indexOf('Ingredients:');
+      if (ingredientsStart >= 0) {
+        int ingredientsEnd =
+            recognizedTextString.indexOf('.', ingredientsStart);
+
+        if (ingredientsEnd > ingredientsStart) {
+          ingredients =
+              recognizedTextString.substring(ingredientsStart, ingredientsEnd);
+          print(ingredients);
+        } else {
+          print('Ingredients section not found.');
+          ingredients = 'Ingredients section not found.';
+        }
+      } else {
+        print('Ingredients section not found.');
+        ingredients = 'Ingredients section not found.';
+      }
 
       await navigator.push(
         MaterialPageRoute(
           builder: (BuildContext context) =>
-              MainScreen(text: recognizedText.text),
+              // MainScreen(text: recognizedTextString),
+              MainScreen(text: ingredients),
+          // MainScreen(text: firstBlockText),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('An error occurred when scanning text'),
+        SnackBar(
+          content: Text('An error occurred when scanning text: $e'),
         ),
       );
     }
