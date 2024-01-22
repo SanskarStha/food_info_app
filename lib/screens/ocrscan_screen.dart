@@ -192,6 +192,7 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
       final recognizedText = await textRecognizer.processImage(inputImage);
       String recognizedTextString = recognizedText.text;
       String ingredients = '';
+      String allAdditives = '';
 
       // String firstBlockText = '';
       // if (recognizedText.blocks.isNotEmpty) {
@@ -209,19 +210,24 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
       //   print("No text blocks found.");
       // }
 
-      int ingredientsStart = recognizedTextString.indexOf('Ingredients:');
+      int ingredientsStart = recognizedTextString.indexOf('INGREDIENTS:');
       if (ingredientsStart >= 0) {
-        int ingredientsEnd =
-            recognizedTextString.indexOf('.', ingredientsStart);
+        ingredients = recognizedTextString
+            .substring(ingredientsStart + 'INGREDIENTS:'.length)
+            .trim();
+        print(ingredients);
 
-        if (ingredientsEnd > ingredientsStart) {
-          ingredients =
-              recognizedTextString.substring(ingredientsStart, ingredientsEnd);
-          print(ingredients);
-        } else {
-          print('Ingredients section not found.');
-          ingredients = 'Ingredients section not found.';
+        // Extract additives
+        RegExp exp = RegExp(
+            r'\b\d{3,4}\b'); // regular expression to match any three to four-digit number
+        Iterable<Match> matches = exp.allMatches(ingredients);
+        List<String> additives = [];
+        for (Match m in matches) {
+          String? additive = m.group(0);
+          additives.add(additive!);
         }
+        allAdditives = additives.join(', ');
+        print('Additives found: $allAdditives');
       } else {
         print('Ingredients section not found.');
         ingredients = 'Ingredients section not found.';
@@ -231,7 +237,7 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
         MaterialPageRoute(
           builder: (BuildContext context) =>
               // MainScreen(text: recognizedTextString),
-              MainScreen(text: ingredients),
+              MainScreen(text: allAdditives),
           // MainScreen(text: firstBlockText),
         ),
       );
