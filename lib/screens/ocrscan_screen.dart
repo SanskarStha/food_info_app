@@ -228,11 +228,11 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
           additives
               .add('E${additive!}'); // 'E' is added before each additive number
         }
-        allAdditives = additives.join(', ');
+        allAdditives = additives.join(',');
         print('Additives found: $allAdditives');
       } else {
-        print('Ingredients section not found.');
-        ingredients = 'Ingredients section not found.';
+        print('No Additives found');
+        allAdditives = 'No Additives found';
       }
 
       await navigator.push(

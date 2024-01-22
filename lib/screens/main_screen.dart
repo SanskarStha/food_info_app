@@ -92,7 +92,8 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     // apicall();
     super.initState();
-    widget.OCRText = widget.text;
+    // widget.OCRText = widget.text;
+    additives = widget.text;
   }
 
   void goToProfilePage() {
@@ -226,9 +227,9 @@ class _MainScreenState extends State<MainScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: primary)),
-              child: widget.OCRText != ""
+              child: widget.text != ""
                   ? SelectableText(
-                      widget.OCRText,
+                      widget.text,
                       style: const TextStyle(fontSize: 16),
                     )
                   : additives.isEmpty && productStatus == "product found"
@@ -243,7 +244,8 @@ class _MainScreenState extends State<MainScreen> {
                               style: const TextStyle(fontSize: 16)),
             ),
             ElevatedButton(
-              onPressed: additives.isNotEmpty
+              onPressed: additives.isNotEmpty &&
+                      additives != "No Additives found"
                   ? () {
                       Navigator.pushReplacement(
                         context,
