@@ -92,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     // apicall();
     super.initState();
-    // widget.OCRText = widget.text;
+    widget.OCRText = widget.text;
     additives = widget.text;
   }
 
@@ -227,9 +227,9 @@ class _MainScreenState extends State<MainScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: primary)),
-              child: widget.text != ""
+              child: widget.OCRText != ""
                   ? SelectableText(
-                      widget.text,
+                      widget.OCRText,
                       style: const TextStyle(fontSize: 16),
                     )
                   : additives.isEmpty && productStatus == "product found"
