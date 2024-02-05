@@ -7,10 +7,16 @@ import 'package:food_info_app/widgets/drawer_main.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 String barcodeString = "";
 String stringResponse = "";
 String allergens = "";
+String gptChemicalName = "";
+String gptCommonName = "";
+String gptDescription = "";
+String gptEffects = "";
 
 class ResultScreen extends StatefulWidget {
   final String additivesName;
@@ -32,6 +38,134 @@ class _ResultScreenState extends State<ResultScreen> {
     )) {
       throw Exception('Could not launch $url');
     }
+  }
+
+  // Future apicall2(String chemicalName) async {
+  //   gptChemicalName = "";
+  //   gptCommonName = "";
+  //   gptDescription = "";
+  //   gptEffects = "";
+
+  //   const String baseUrl =
+  //       "https://chatgpt.hkbu.edu.hk/general/rest/deployments/gpt-35-turbo-16k/chat/completions?api-version=2023-08-01-preview";
+  //   const String apiKey = "ed41ce4a-e9ba-457e-a18c-7f8c887be05e";
+  //   String conversation =
+  //       'Provide me with information about the food additive $chemicalName . When providing information about a food additive, please adhere to the following format strictly:\n'
+  //       '- Start with "chemicalName:" followed by the name that starts with "E",\n'
+  //       '- Then write "commonName:" followed by the commonly known name,\n'
+  //       '- Next, "description:" followed by a 2 to 3 sentences short description,\n'
+  //       '- Finally, "effects:" followed by any known effects if applicable.\n'
+  //       'For example, for the food additive named E422, the information should be presented as follows:\n'
+  //       'chemicalName: E422 \n'
+  //       'commonName: Glycerol \n'
+  //       'description: Glycerol is a sugar alcohol that is clear, odorless, and sweet-tasting. It is a viscous liquid that is commonly derived from plant or animal fats and used as a food additive for its moisture-retaining and sweetening properties. \n'
+  //       'effects: Glycerol is generally considered safe for consumption and has no known adverse effects when used in food. However, excessive intake may cause gastrointestinal disturbances such as diarrhea and excessive urination due to its osmotic effect. \n';
+
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(baseUrl),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'api-key': apiKey,
+  //       },
+  //       body: jsonEncode({
+  //         'messages': [
+  //           {'role': 'user', 'content': conversation},
+  //         ],
+  //       }),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       // Check if the widget is still mounted before calling setState
+  //       if (mounted) {
+  //         setState(() {
+  //           stringResponse = response.body.toString();
+  //           Map<String, dynamic> jsonMap = jsonDecode(stringResponse);
+  //           String gptResponse = jsonMap['choices'][0]['message']['content'];
+  //           List<String> lines = gptResponse.trim().split("\n");
+  //           gptChemicalName = lines[0].split(": ")[1];
+  //           gptCommonName = lines[1].split(": ")[1];
+  //           gptDescription = lines[2].split(": ")[1];
+  //           gptEffects = lines[3].split(": ")[1];
+  //           // chatGPTResponse = tempResponse;
+  //           // print(chatGPTResponse);
+  //         });
+  //       }
+  //     } else {
+  //       // Handle error, maybe throw an exception
+  //       return ("API not working");
+  //     }
+  //   } catch (e) {
+  //     // Handle exception, maybe rethrow
+  //     return ("API catch error");
+  //   }
+  // }
+
+  // Future<void> doAsyncCall(String chemicalName) async {
+  //   try {
+  //     await apicall2(chemicalName);
+  //   } catch (e) {
+  //     // Handle errors appropriately, e.g., show an error message
+  //     print('Error in doAsyncCall: $e');
+  //   }
+  // }
+
+  Map<String, Future<Map<String, dynamic>>> _apiFutures = {};
+
+  Future<Map<String, dynamic>> apicall2(String chemicalName) async {
+    gptChemicalName = "";
+    gptCommonName = "";
+    gptDescription = "";
+    gptEffects = "";
+
+    const String baseUrl =
+        "https://chatgpt.hkbu.edu.hk/general/rest/deployments/gpt-35-turbo-16k/chat/completions?api-version=2023-08-01-preview";
+    const String apiKey = "ed41ce4a-e9ba-457e-a18c-7f8c887be05e";
+    String conversation =
+        'Provide me with information about the food additive $chemicalName . When providing information about a food additive, please adhere to the following format strictly:\n'
+        '- Start with "chemicalName:" followed by the name that starts with "E",\n'
+        '- Then write "commonName:" followed by the commonly known name,\n'
+        '- Next, "description:" followed by a 2 to 3 sentences short description,\n'
+        '- Finally, "effects:" followed by any known effects if applicable.\n'
+        'For example, for the food additive named E422, the information should be presented as follows:\n'
+        'chemicalName: E422 \n'
+        'commonName: Glycerol \n'
+        'description: Glycerol is a sugar alcohol that is clear, odorless, and sweet-tasting. It is a viscous liquid that is commonly derived from plant or animal fats and used as a food additive for its moisture-retaining and sweetening properties. \n'
+        'effects: Glycerol is generally considered safe for consumption and has no known adverse effects when used in food. However, excessive intake may cause gastrointestinal disturbances such as diarrhea and excessive urination due to its osmotic effect. \n';
+
+    final response = await http.post(
+      Uri.parse(baseUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': apiKey,
+      },
+      body: jsonEncode({
+        'messages': [
+          {'role': 'user', 'content': conversation},
+        ],
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonMap = jsonDecode(response.body);
+      String gptResponse = jsonMap['choices'][0]['message']['content'];
+      List<String> lines = gptResponse.trim().split("\n");
+      return {
+        'chemicalName': lines[0].split(": ")[1],
+        'commonName': lines[1].split(": ")[1],
+        'description': lines[2].split(": ")[1],
+        'effects': lines[3].split(": ")[1],
+      };
+    } else {
+      throw Exception("API not working");
+    }
+  }
+
+  Future<Map<String, dynamic>> getChemicalInfo(String chemicalName) {
+    if (!_apiFutures.containsKey(chemicalName)) {
+      _apiFutures[chemicalName] = apicall2(chemicalName);
+    }
+    return _apiFutures[chemicalName] as Future<Map<String, dynamic>>;
   }
 
   @override
@@ -234,62 +368,173 @@ class _ResultScreenState extends State<ResultScreen> {
                             ),
                           );
                         } else {
-                          return Card(
-                            color: Colors
-                                .grey, // Set the card color based on the 'harmful' value
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Chemical Name:",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
+                          // If Firestore data is not available, use FutureBuilder to wait for apicall2
+                          return FutureBuilder<Map<String, dynamic>>(
+                            future: getChemicalInfo(
+                                chemicalName), // Use the getChemicalInfo method
+                            builder: (context,
+                                AsyncSnapshot<Map<String, dynamic>>
+                                    apiSnapshot) {
+                              if (apiSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (apiSnapshot.hasError) {
+                                return Text('API Error: ${apiSnapshot.error}');
+                              } else if (apiSnapshot.hasData) {
+                                final apiData = apiSnapshot.data;
+                                // Extracting the data received from the API
+                                final String commonName =
+                                    apiData?['commonName'] ?? 'Unknown';
+                                final String description =
+                                    apiData?['description'] ??
+                                        'No description available';
+                                final String chemicalName =
+                                    apiData?['chemicalName'] ?? 'Unknown';
+                                final String effects = apiData?['effects'] ??
+                                    'No effects information available';
+                                return Card(
+                                  color: Colors
+                                      .grey, // Set the card color based on the 'harmful' value
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          "Chemical Name:",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(chemicalName,
+                                            style:
+                                                const TextStyle(fontSize: 16)),
+                                        const SizedBox(height: 16),
+                                        const Text(
+                                          "Common Name:",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(commonName,
+                                            style:
+                                                const TextStyle(fontSize: 16)),
+                                        const SizedBox(height: 16),
+                                        const Text(
+                                          "Description:",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(description,
+                                            style:
+                                                const TextStyle(fontSize: 16)),
+                                        const SizedBox(height: 16),
+                                        const Text(
+                                          "Effects:",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(effects,
+                                            style:
+                                                const TextStyle(fontSize: 16)),
+                                        const SizedBox(height: 16),
+                                        const Text(
+                                          "Sources:",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const Text("chatGPT",
+                                            style: TextStyle(fontSize: 16)),
+                                        const SizedBox(height: 16),
+                                      ],
                                     ),
                                   ),
-                                  Text(chemicalName,
-                                      style: const TextStyle(fontSize: 16)),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    "Common Name:",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const Text("Unknown",
-                                      style: TextStyle(fontSize: 16)),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    "Effects:",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const Text("Unknown",
-                                      style: TextStyle(fontSize: 16)),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    "Sources:",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const Text("Unknown",
-                                      style: TextStyle(fontSize: 16)),
-                                  const SizedBox(height: 16),
-                                ],
-                              ),
-                            ),
+                                );
+                              } else {
+                                return const Text('No data available');
+                              }
+                            },
                           );
+                          // doAsyncCall(chemicalName);
+                          // return Card(
+                          //   color: Colors
+                          //       .grey, // Set the card color based on the 'harmful' value
+                          //   elevation: 4,
+                          //   shape: RoundedRectangleBorder(
+                          //     borderRadius: BorderRadius.circular(12),
+                          //   ),
+                          //   child: Padding(
+                          //     padding: const EdgeInsets.all(16.0),
+                          //     child: Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         const Text(
+                          //           "Chemical Name:",
+                          //           style: TextStyle(
+                          //             fontSize: 18,
+                          //             fontWeight: FontWeight.bold,
+                          //           ),
+                          //         ),
+                          //         Text(chemicalName,
+                          //             style: const TextStyle(fontSize: 16)),
+                          //         const SizedBox(height: 16),
+                          //         const Text(
+                          //           "Common Name:",
+                          //           style: TextStyle(
+                          //             fontSize: 18,
+                          //             fontWeight: FontWeight.bold,
+                          //           ),
+                          //         ),
+                          //         Text(gptCommonName,
+                          //             style: const TextStyle(fontSize: 16)),
+                          //         const SizedBox(height: 16),
+                          //         const Text(
+                          //           "Description:",
+                          //           style: TextStyle(
+                          //             fontSize: 18,
+                          //             fontWeight: FontWeight.bold,
+                          //           ),
+                          //         ),
+                          //         Text(gptDescription,
+                          //             style: const TextStyle(fontSize: 16)),
+                          //         const SizedBox(height: 16),
+                          //         const Text(
+                          //           "Effects:",
+                          //           style: TextStyle(
+                          //             fontSize: 18,
+                          //             fontWeight: FontWeight.bold,
+                          //           ),
+                          //         ),
+                          //         Text(gptEffects,
+                          //             style: const TextStyle(fontSize: 16)),
+                          //         const SizedBox(height: 16),
+                          //         const Text(
+                          //           "Sources:",
+                          //           style: TextStyle(
+                          //             fontSize: 18,
+                          //             fontWeight: FontWeight.bold,
+                          //           ),
+                          //         ),
+                          //         const Text("chatGPT",
+                          //             style: TextStyle(fontSize: 16)),
+                          //         const SizedBox(height: 16),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // );
                         }
                       }
                     },

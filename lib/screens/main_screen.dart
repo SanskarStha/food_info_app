@@ -28,6 +28,7 @@ class _MainScreenState extends State<MainScreen> {
   String additives = "";
   String allergens = "";
   String productStatus = "";
+  String chatGPTResponse = "";
   final user = FirebaseAuth.instance.currentUser!;
 
   // Future apicall() async {
@@ -67,6 +68,9 @@ class _MainScreenState extends State<MainScreen> {
     additives = "";
     productStatus = "";
     widget.OCRText = "";
+    chatGPTResponse = "";
+
+    // await apicall2();
 
     final QuerySnapshot productQuerySnapshot = await FirebaseFirestore.instance
         .collection('products')
@@ -87,6 +91,59 @@ class _MainScreenState extends State<MainScreen> {
       });
     }
   }
+
+  // Future apicall2() async {
+  //   const String baseUrl =
+  //       "https://chatgpt.hkbu.edu.hk/general/rest/deployments/gpt-35-turbo-16k/chat/completions?api-version=2023-08-01-preview";
+  //   const String apiKey = "ed41ce4a-e9ba-457e-a18c-7f8c887be05e";
+  //   const conversation =
+  //       'Provide me with information about the food additive E101. When providing information about a food additive, please adhere to the following format strictly:\n'
+  //       '- Start with "chemicalName:" followed by the name that starts with "E",\n'
+  //       '- Then write "commonName:" followed by the commonly known name,\n'
+  //       '- Next, "description:" followed by a 2 to 3 sentences short description,\n'
+  //       '- Finally, "effects:" followed by any known effects if applicable.\n'
+  //       'For example, for the food additive named E422, the information should be presented as follows:\n'
+  //       'chemicalName: E422 \n'
+  //       'commonName: Glycerol \n'
+  //       'description: Glycerol is a sugar alcohol that is clear, odorless, and sweet-tasting. It is a viscous liquid that is commonly derived from plant or animal fats and used as a food additive for its moisture-retaining and sweetening properties. \n'
+  //       'effects: Glycerol is generally considered safe for consumption and has no known adverse effects when used in food. However, excessive intake may cause gastrointestinal disturbances such as diarrhea and excessive urination due to its osmotic effect. \n';
+
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(baseUrl),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'api-key': apiKey,
+  //       },
+  //       body: jsonEncode({
+  //         'messages': [
+  //           {'role': 'user', 'content': conversation},
+  //         ],
+  //       }),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       setState(() {
+  //         stringResponse = response.body.toString();
+  //         Map<String, dynamic> jsonMap = jsonDecode(stringResponse);
+  //         String tempResponse = jsonMap['choices'][0]['message']['content'];
+  //         List<String> lines = tempResponse.trim().split("\n");
+  //         String chemicalName = lines[0].split(": ")[1];
+  //         String commonName = lines[1].split(": ")[1];
+  //         String description = lines[2].split(": ")[1];
+  //         String effects = lines[3].split(": ")[1];
+  //         chatGPTResponse = tempResponse;
+  //         print(chatGPTResponse);
+  //       });
+  //     } else {
+  //       // Handle error, maybe throw an exception
+  //       return ("API not working");
+  //     }
+  //   } catch (e) {
+  //     // Handle exception, maybe rethrow
+  //     return ("API catch error");
+  //   }
+  // }
 
   @override
   void initState() {
@@ -236,9 +293,9 @@ class _MainScreenState extends State<MainScreen> {
                       ? const Text("No Additives found",
                           style: TextStyle(fontSize: 16))
                       : productStatus == "product not found"
-                          ? const Text(
-                              "Product not found",
-                              style: TextStyle(fontSize: 16),
+                          ? Text(
+                              chatGPTResponse,
+                              style: const TextStyle(fontSize: 16),
                             )
                           : SelectableText(additives,
                               style: const TextStyle(fontSize: 16)),
