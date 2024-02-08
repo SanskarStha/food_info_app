@@ -1,8 +1,8 @@
 import 'package:food_info_app/providers/all_providers.dart';
 import 'package:food_info_app/auth/main_page.dart';
-import 'package:food_info_app/screens/splash_screen.dart';
 import 'package:food_info_app/utils/keys.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
       title: 'Barcode and QRcode Scanner',
       theme: ThemeData(
         primarySwatch: primary,
+        textTheme: GoogleFonts.openSansTextTheme(),
       ),
       home: const MainPage(),
     );
