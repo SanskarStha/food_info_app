@@ -211,10 +211,11 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
       // }
 
       int ingredientsStart =
-          recognizedTextString.toLowerCase().indexOf('ingredients');
-      if (ingredientsStart >= 0) {
+          recognizedTextString.toLowerCase().indexOf('ingredients:');
+      int ingredientsEnd = recognizedTextString.indexOf('.', ingredientsStart);
+      if (ingredientsStart >= 0 && ingredientsEnd >= 0) {
         ingredients = recognizedTextString
-            .substring(ingredientsStart + 'ingredients'.length)
+            .substring(ingredientsStart + 'ingredients:'.length, ingredientsEnd)
             .trim();
         print(ingredients);
 
