@@ -119,8 +119,8 @@ class _ResultScreenState extends State<ResultScreen> {
     gptEffects = "";
 
     const String baseUrl =
-        "https://chatgpt.hkbu.edu.hk/general/rest/deployments/gpt-35-turbo-16k/chat/completions?api-version=2023-08-01-preview";
-    const String apiKey = "ed41ce4a-e9ba-457e-a18c-7f8c887be05e";
+        "https://chatgpt.hkbu.edu.hk/general/rest/deployments/gpt-35-turbo/chat/completions?api-version=2023-12-01-preview";
+    const String apiKey = "799142f8-9f76-4c6d-8fa2-dbb65d80929d";
     String conversation =
         'Provide me with information about the food additive $chemicalName . When providing information about a food additive, please adhere to the following format strictly:\n'
         '- Start with "chemicalName:" followed by the name that starts with "E",\n'
