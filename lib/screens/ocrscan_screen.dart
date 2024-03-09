@@ -226,8 +226,10 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
         List<String> additives = [];
         for (Match m in matches) {
           String? additive = m.group(0);
-          additives
-              .add('E${additive!}'); // 'E' is added before each additive number
+          if (!additives.contains('E$additive')) {
+            additives
+                .add('E$additive'); // 'E' is added before each additive number
+          }
         }
         allAdditives = additives.join(',');
         print('Additives found: $allAdditives');
