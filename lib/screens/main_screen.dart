@@ -117,7 +117,7 @@ class _MainScreenState extends State<MainScreen> {
           onSignOut: FirebaseAuth.instance.signOut,
         ),
         appBar: AppBar(
-          title: const Text("Food Info"),
+          title: const Text("Additive Insight"),
         ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(left: 25, bottom: 50),
