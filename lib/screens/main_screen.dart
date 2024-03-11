@@ -215,24 +215,9 @@ class _MainScreenState extends State<MainScreen> {
                           : SelectableText(additives,
                               style: const TextStyle(fontSize: 16)),
             ),
-            // ElevatedButton(
-            //   onPressed: additives.isNotEmpty &&
-            //           additives != "No Additives found"
-            //       ? () {
-            //           Navigator.pushReplacement(
-            //             context,
-            //             MaterialPageRoute(
-            //               builder: (context) => ResultScreen(
-            //                   additivesName: additives), // Pass additives data
-            //             ),
-            //           );
-            //         }
-            //       : null,
-            //   child: const Text('Results'),
-            // ),
             Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: 10.0), // Adjust the vertical margin as needed
+                    vertical: 16.0), // Adjust the vertical margin as needed
                 child: FloatingActionButton.extended(
                   onPressed:
                       additives.isNotEmpty && additives != "No Additives found"

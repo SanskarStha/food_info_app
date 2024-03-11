@@ -89,7 +89,7 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
               ),
             Scaffold(
               appBar: AppBar(
-                title: const Text('Text Recognition Sample'),
+                title: const Text('OCR Scan'),
               ),
               backgroundColor: _isPermissionGranted ? Colors.transparent : null,
               body: _isPermissionGranted

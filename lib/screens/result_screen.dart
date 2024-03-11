@@ -157,7 +157,7 @@ class _ResultScreenState extends State<ResultScreen> {
                     margin: const EdgeInsets.only(right: 8),
                   ),
                   const Text(
-                    'Might be harmful    ',
+                    'Harmful in general    ',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -171,7 +171,20 @@ class _ResultScreenState extends State<ResultScreen> {
                     margin: const EdgeInsets.only(right: 8),
                   ),
                   const Text(
-                    'AI source',
+                    'AI source     ',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Container(
+                    width: 20,
+                    height: 20,
+                    color: const Color(0xFFF9A03F),
+                    margin: const EdgeInsets.only(right: 8),
+                  ),
+                  const Text(
+                    'Personal Health Effects',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -453,17 +466,6 @@ class _ResultScreenState extends State<ResultScreen> {
                 },
               ),
             ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.pushReplacement(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => MainScreen(text: ""),
-            //       ),
-            //     ); // Navigate back to MainScreen
-            //   },
-            //   child: const Text("Scan Next"),
-            // ),
             Padding(
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0), // Adjust the vertical margin as needed
