@@ -101,10 +101,21 @@ class _OCRScreenState extends State<OCRScanScreen> with WidgetsBindingObserver {
                         Container(
                           padding: const EdgeInsets.only(bottom: 30.0),
                           child: Center(
-                            child: ElevatedButton(
-                              onPressed: _scanImage,
-                              child: const Text('Scan text'),
-                            ),
+                            // child: ElevatedButton(
+                            //   onPressed: _scanImage,
+                            //   child: const Text('Scan text'),
+                            // ),
+                            child: FloatingActionButton.extended(
+                                onPressed: _scanImage,
+                                label: const Row(
+                                  children: [
+                                    SizedBox(width: 6),
+                                    Text(
+                                      "Scan Text",
+                                      style: TextStyle(fontSize: 16),
+                                    )
+                                  ],
+                                )),
                           ),
                         ),
                       ],

@@ -453,17 +453,38 @@ class _ResultScreenState extends State<ResultScreen> {
                 },
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MainScreen(text: ""),
-                  ),
-                ); // Navigate back to MainScreen
-              },
-              child: const Text("Scan Next"),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.pushReplacement(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => MainScreen(text: ""),
+            //       ),
+            //     ); // Navigate back to MainScreen
+            //   },
+            //   child: const Text("Scan Next"),
+            // ),
+            Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10.0), // Adjust the vertical margin as needed
+                child: FloatingActionButton.extended(
+                    onPressed: () async {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MainScreen(text: ""),
+                        ),
+                      ); // Navigate back to MainScreen
+                    },
+                    label: const Row(
+                      children: [
+                        SizedBox(width: 6),
+                        Text(
+                          "Scan Next",
+                          style: TextStyle(fontSize: 16),
+                        )
+                      ],
+                    ))),
           ],
         ),
       ),
