@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:food_info_app/main.dart';
 import 'package:food_info_app/reusable_widgets/resuable_widget.dart';
 import 'package:food_info_app/screens/main_screen.dart';
 
@@ -33,7 +34,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          color: Colors.indigo,
+          color: Color(0xFF5448C8),
         ),
         child: SingleChildScrollView(
           child: Padding(

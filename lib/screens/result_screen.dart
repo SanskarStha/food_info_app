@@ -133,6 +133,53 @@ class _ResultScreenState extends State<ResultScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Wrap(
+                children: [
+                  Container(
+                    width: 20,
+                    height: 20,
+                    color: const Color(0xFF14B86B),
+                    margin: const EdgeInsets.only(right: 8),
+                  ),
+                  const Text(
+                    'Safe to consume    ',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Container(
+                    width: 20,
+                    height: 20,
+                    color: const Color(0xFFFCFF5C),
+                    margin: const EdgeInsets.only(right: 8),
+                  ),
+                  const Text(
+                    'Might be harmful    ',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    width: 20,
+                    height: 20,
+                    color: const Color(0xFFA9A5B6),
+                    margin: const EdgeInsets.only(right: 8),
+                  ),
+                  const Text(
+                    'AI source',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: widget.additives.length,
@@ -164,9 +211,9 @@ class _ResultScreenState extends State<ResultScreen> {
 
                           return Card(
                             color: harmful
-                                ? Colors.yellow
-                                : Colors
-                                    .green, // Set the card color based on the 'harmful' value
+                                ? const Color(0xFFFCFF5C)
+                                : const Color(
+                                    0xFF14B86B), // Set the card color based on the 'harmful' value
                             elevation: 4,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -325,8 +372,7 @@ class _ResultScreenState extends State<ResultScreen> {
                                 final String effects = apiData?['effects'] ??
                                     'No effects information available';
                                 return Card(
-                                  color: Colors
-                                      .grey, // Set the card color based on the 'harmful' value
+                                  color: const Color(0xFFA9A5B6),
                                   elevation: 4,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),

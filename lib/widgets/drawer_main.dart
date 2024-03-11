@@ -19,10 +19,9 @@ class DrawerMain extends StatelessWidget {
             const DrawerHeader(
                 child: Icon(
               Icons.person,
-              color: Colors.indigo,
+              color: Color(0xFF5448C8),
               size: 64,
             )),
-
             MyListTile(
               icon: Icons.home,
               text: 'Home',
@@ -36,40 +35,16 @@ class DrawerMain extends StatelessWidget {
                 );
               },
             ),
-
             MyListTile(
               icon: Icons.person,
               text: 'Profile',
               onTap: onProfileTap,
             ),
-
             MyListTile(
               icon: Icons.logout,
               text: 'Log Out',
               onTap: onSignOut,
             )
-
-            // ListTile(
-            //   leading: Icon(Icons.volume_up, color: primary),
-            //   title: const Text("Sound", style: TextStyle(fontSize: 16)),
-            //   trailing: Switch(
-            //       value: !barcode.isMuted,
-            //       onChanged: (value) => barcode.toggleSound()),
-            // ),
-            // ListTile(
-            //   leading: Icon(Icons.volume_up, color: primary),
-            //   title: const Text("Sound", style: TextStyle(fontSize: 16)),
-            //   trailing: Switch(
-            //       value: !barcode.isMuted,
-            //       onChanged: (value) => barcode.toggleSound()),
-            // ),
-            // ListTile(
-            //   leading: Icon(Icons.vibration, color: primary),
-            //   title: const Text("Vibration", style: TextStyle(fontSize: 16)),
-            //   trailing: Switch(
-            //       value: !barcode.isVibrateOff,
-            //       onChanged: (value) => barcode.toggleVibration()),
-            // ),
           ]);
         },
       )),

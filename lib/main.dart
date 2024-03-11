@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'dart:ui';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,4 +35,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-MaterialColor primary = Colors.indigo;
+Color customColor = const Color(0xFF5448C8);
+MaterialColor primary = MaterialColor(customColor.value, {
+  50: customColor, // You can specify shades of the color if needed
+  100: customColor,
+  200: customColor,
+  300: customColor,
+  400: customColor,
+  500: customColor,
+  600: customColor,
+  700: customColor,
+  800: customColor,
+  900: customColor,
+});
