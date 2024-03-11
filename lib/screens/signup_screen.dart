@@ -65,7 +65,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
-            color: Colors.indigo,
+            color: Color(0xFF5448C8),
           ),
           child: SingleChildScrollView(
               child: Padding(
@@ -100,7 +100,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                reusableTextField("Enter Password", Icons.lock_outline, false,
+                reusableTextField("Enter Password", Icons.lock_outline, true,
                     _passwordTextController),
                 const SizedBox(height: 20),
                 Container(
@@ -247,7 +247,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.indigo.shade300,
+        color: const Color(0xFF7C72D5),
       ),
       child: Column(
         children: [
@@ -292,7 +292,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.indigo.shade300,
+        color: const Color(0xFF7C72D5),
       ),
       child: Column(
         children: [
