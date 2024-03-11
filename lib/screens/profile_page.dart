@@ -194,6 +194,8 @@ class _ProfilePageState extends State<ProfilePage> {
             if (data != null && data.isNotEmpty) {
               final userName = data.first['username'];
               final age = data.first['age'];
+              final weight = data.first['weight'];
+              final height = data.first['height'];
               final email = data.first['email'];
               var isVegan = data.first['vegan'];
               var isVegetarian = data.first['vegetarian'];
@@ -216,7 +218,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyle(color: Colors.indigo[700]),
                   ),
                   // const SizedBox(height: 50),
-                  _buildDetailsSection(userName.toString(), age),
+                  _buildDetailsSection(
+                      userName.toString(), age, weight, height),
                   _buildPreferencesSection(
                     isVegan: isVegan == 'true',
                     isVegetarian: isVegetarian == 'true',
@@ -251,7 +254,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildDetailsSection(String userName, int age) {
+  Widget _buildDetailsSection(
+      String userName, int age, int weight, int height) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Card(
@@ -286,6 +290,26 @@ class _ProfilePageState extends State<ProfilePage> {
               trailing: IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () => editField('age'),
+              ),
+            ),
+            ListTile(
+              title:
+                  const Text('Weight', style: TextStyle(color: Colors.indigo)),
+              subtitle: Text(weight.toString(),
+                  style: const TextStyle(color: Colors.black)),
+              trailing: IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () => editField('weight'),
+              ),
+            ),
+            ListTile(
+              title:
+                  const Text('Height', style: TextStyle(color: Colors.indigo)),
+              subtitle: Text(height.toString(),
+                  style: const TextStyle(color: Colors.black)),
+              trailing: IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () => editField('height'),
               ),
             ),
           ],
