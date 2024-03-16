@@ -125,6 +125,12 @@ class _ResultScreenState extends State<ResultScreen> {
         FirebaseFirestore.instance.collection('users');
     final currentUser = FirebaseAuth.instance.currentUser!;
     String hasTypeIIDiabetes = "";
+    String hasHypertension = "";
+    String hasNutAllergy = "";
+    String isLactoseIntolerant = "";
+    String isVegan = "";
+    String isVegetarian = "";
+
     Color cardColor = const Color(0xFF14B86B);
 
     return Scaffold(
@@ -223,10 +229,10 @@ class _ResultScreenState extends State<ResultScreen> {
                           final effects = data.first['effects'];
                           final sources = data.first['sources'];
                           final harmful = data.first['harmful'];
-                          final isVegan = data.first['isVegan'];
-                          final isVegetarian = data.first['isVegetarian'];
-                          final hasLactose = data.first['hasLactose'];
-                          final hasNuts = data.first['hasNuts'];
+                          final vegan = data.first['isVegan'];
+                          final vegetarian = data.first['isVegetarian'];
+                          final lactose = data.first['hasLactose'];
+                          final nuts = data.first['hasNuts'];
                           final linkedToTypeIIDiabetes =
                               data.first['linkedToTypeIIDiabetes'];
 
@@ -249,15 +255,14 @@ class _ResultScreenState extends State<ResultScreen> {
                                   final weight = data.first['weight'];
                                   final height = data.first['height'];
                                   final email = data.first['email'];
-                                  var isVegan = data.first['vegan'];
-                                  var isVegetarian = data.first['vegetarian'];
-                                  var isLactoseIntolerant =
+                                  isVegan = data.first['vegan'];
+                                  isVegetarian = data.first['vegetarian'];
+                                  isLactoseIntolerant =
                                       data.first['lactose intolerant'];
-                                  var hasNutAllergy = data.first['nut allergy'];
+                                  hasNutAllergy = data.first['nut allergy'];
                                   hasTypeIIDiabetes =
                                       data.first['type II diabetes'];
-                                  var hasHypertension =
-                                      data.first['hypertension'];
+                                  hasHypertension = data.first['hypertension'];
                                   if (hasTypeIIDiabetes == "true" &&
                                       linkedToTypeIIDiabetes) {
                                     cardColor = const Color(0xFFF9A03F);
@@ -323,28 +328,29 @@ class _ResultScreenState extends State<ResultScreen> {
                                       Text(effects,
                                           style: const TextStyle(fontSize: 16)),
                                       const SizedBox(height: 16),
-                                      if (!isVegan)
+                                      if (!vegan && isVegan == "true")
                                         Text(
                                           "$chemicalName contains non-vegan ingredient.",
                                           style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),
                                         ),
-                                      if (!isVegetarian)
+                                      if (!vegetarian && isVegetarian == "true")
                                         Text(
                                           "$chemicalName contains non-vegetarian ingredient.",
                                           style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),
                                         ),
-                                      if (hasLactose)
+                                      if (lactose &&
+                                          isLactoseIntolerant == "true")
                                         Text(
                                           "$chemicalName contains milk products.",
                                           style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),
                                         ),
-                                      if (hasNuts)
+                                      if (nuts && hasNutAllergy == "true")
                                         Text(
                                           "$chemicalName contains nuts",
                                           style: const TextStyle(
