@@ -121,6 +121,12 @@ class _ResultScreenState extends State<ResultScreen> {
   Widget build(BuildContext context) {
     final CollectionReference productInfoCollection =
         FirebaseFirestore.instance.collection('additives');
+    final CollectionReference userInfoCollection =
+        FirebaseFirestore.instance.collection('users');
+    final currentUser = FirebaseAuth.instance.currentUser!;
+    String hasTypeIIDiabetes = "";
+    Color cardColor = const Color(0xFF14B86B);
+
     return Scaffold(
       key: mainKey,
       drawer: DrawerMain(
@@ -221,141 +227,195 @@ class _ResultScreenState extends State<ResultScreen> {
                           final isVegetarian = data.first['isVegetarian'];
                           final hasLactose = data.first['hasLactose'];
                           final hasNuts = data.first['hasNuts'];
+                          final linkedToTypeIIDiabetes =
+                              data.first['linkedToTypeIIDiabetes'];
 
-                          return Card(
-                            color: harmful
-                                ? const Color(0xFFFCFF5C)
-                                : const Color(
-                                    0xFF14B86B), // Set the card color based on the 'harmful' value
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Chemical Name:",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(chemicalName,
-                                      style: const TextStyle(fontSize: 16)),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    "Common Name:",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(commonName,
-                                      style: const TextStyle(fontSize: 16)),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    "Description:",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(description,
-                                      style: const TextStyle(fontSize: 16)),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    "Effects:",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(effects,
-                                      style: const TextStyle(fontSize: 16)),
-                                  const SizedBox(height: 16),
-                                  if (!isVegan)
-                                    Text(
-                                      "$chemicalName contains non-vegan ingredient.",
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  if (!isVegetarian)
-                                    Text(
-                                      "$chemicalName contains non-vegetarian ingredient.",
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  if (hasLactose)
-                                    Text(
-                                      "$chemicalName contains milk products.",
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  if (hasNuts)
-                                    Text(
-                                      "$chemicalName contains nuts",
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    "Sources:",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  RichText(
-                                    text: TextSpan(
-                                      children:
-                                          sources.map<InlineSpan>((source) {
-                                        if (source is String) {
-                                          return TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: source,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  color: Color.fromARGB(255, 5,
-                                                      80, 141), // Link color
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                ),
-                                                recognizer:
-                                                    TapGestureRecognizer()
-                                                      ..onTap = () {
-                                                        // Handle the URL click event here, e.g., open the URL in a browser
-                                                        launchURL(source);
-                                                      },
-                                              ),
-                                              const TextSpan(
-                                                  text:
-                                                      '\n'), // Add a line break
-                                            ],
-                                          );
-                                        } else {
-                                          // Handle cases where the source is not a string, e.g., you can display an error message.
-                                          return const TextSpan(
-                                            text: 'Invalid URL',
-                                            style: TextStyle(
+                          return FutureBuilder<QuerySnapshot>(
+                            future: userInfoCollection
+                                .where('email', isEqualTo: currentUser.email)
+                                .get(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final data = snapshot.data?.docs;
+                                if (data != null && data.isNotEmpty) {
+                                  final userName = data.first['username'];
+                                  final age = data.first['age'];
+                                  final weight = data.first['weight'];
+                                  final height = data.first['height'];
+                                  final email = data.first['email'];
+                                  var isVegan = data.first['vegan'];
+                                  var isVegetarian = data.first['vegetarian'];
+                                  var isLactoseIntolerant =
+                                      data.first['lactose intolerant'];
+                                  var hasNutAllergy = data.first['nut allergy'];
+                                  hasTypeIIDiabetes =
+                                      data.first['type II diabetes'];
+                                  var hasHypertension =
+                                      data.first['hypertension'];
+                                  if (hasTypeIIDiabetes == "true" &&
+                                      linkedToTypeIIDiabetes) {
+                                    cardColor = const Color(0xFFF9A03F);
+                                  } else {
+                                    if (harmful) {
+                                      cardColor = const Color(0xFFFCFF5C);
+                                    } else {
+                                      cardColor = const Color(0xFF14B86B);
+                                    }
+                                  }
+                                }
+                              }
+                              return Card(
+                                color:
+                                    cardColor, // Set the card color based on the 'harmful' value
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Chemical Name:",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(chemicalName,
+                                          style: const TextStyle(fontSize: 16)),
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        "Common Name:",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(commonName,
+                                          style: const TextStyle(fontSize: 16)),
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        "Description:",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(description,
+                                          style: const TextStyle(fontSize: 16)),
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        "Effects:",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(effects,
+                                          style: const TextStyle(fontSize: 16)),
+                                      const SizedBox(height: 16),
+                                      if (!isVegan)
+                                        Text(
+                                          "$chemicalName contains non-vegan ingredient.",
+                                          style: const TextStyle(
                                               fontSize: 16,
-                                              color: Colors.red,
-                                            ),
-                                          );
-                                        }
-                                      }).toList(),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      if (!isVegetarian)
+                                        Text(
+                                          "$chemicalName contains non-vegetarian ingredient.",
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      if (hasLactose)
+                                        Text(
+                                          "$chemicalName contains milk products.",
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      if (hasNuts)
+                                        Text(
+                                          "$chemicalName contains nuts",
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      if (hasTypeIIDiabetes == "true" &&
+                                          linkedToTypeIIDiabetes)
+                                        Text(
+                                          "$chemicalName is linked to increasing risk of Type II Diabetes",
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        "Sources:",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      RichText(
+                                        text: TextSpan(
+                                          children:
+                                              sources.map<InlineSpan>((source) {
+                                            if (source is String) {
+                                              return TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: source,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      color: Color.fromARGB(
+                                                          255,
+                                                          5,
+                                                          80,
+                                                          141), // Link color
+                                                      decoration: TextDecoration
+                                                          .underline,
+                                                    ),
+                                                    recognizer:
+                                                        TapGestureRecognizer()
+                                                          ..onTap = () {
+                                                            // Handle the URL click event here, e.g., open the URL in a browser
+                                                            launchURL(source);
+                                                          },
+                                                  ),
+                                                  const TextSpan(
+                                                      text:
+                                                          '\n'), // Add a line break
+                                                ],
+                                              );
+                                            } else {
+                                              // Handle cases where the source is not a string, e.g., you can display an error message.
+                                              return const TextSpan(
+                                                text: 'Invalid URL',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.red,
+                                                ),
+                                              );
+                                            }
+                                          }).toList(),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         } else {
                           // If Firestore data is not available, use FutureBuilder to wait for apicall2
