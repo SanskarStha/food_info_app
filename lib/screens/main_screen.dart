@@ -28,59 +28,34 @@ class _MainScreenState extends State<MainScreen> {
   String additives = "";
   String allergens = "";
   String productStatus = "";
+
   final user = FirebaseAuth.instance.currentUser!;
-
-  Future apicall() async {
-    additives = "";
-    productStatus = "";
-    widget.OCRText = "";
-    http.Response response;
-
-    response = await http.get(Uri.parse(
-        "https://world.openfoodfacts.net/api/v2/product/$barcodeString?fields=additives_tags,allergens"));
-
-    if (response.statusCode == 200) {
-      setState(() {
-        stringResponse = response.body.toString();
-        Map<String, dynamic> jsonMap = jsonDecode(stringResponse);
-        productStatus = jsonMap['status_verbose'];
-
-        if (productStatus == "product found") {
-          List<dynamic> additivesTags = jsonMap['product']['additives_tags'];
-          // additives = additivesTags.join(',');
-          additives = additivesTags.map((additive) {
-            String code = additive.toString().replaceAll("en:", "");
-            String capitalizedCode = code[0].toUpperCase() + code.substring(1);
-            return capitalizedCode;
-          }).join(',');
-          print("additives: $additives");
-        }
-      });
-    } else {
-      setState(() {
-        productStatus = "product not found";
-      });
-    }
-  }
 
   // Future apicall() async {
   //   additives = "";
   //   productStatus = "";
   //   widget.OCRText = "";
-  //   chatGPTResponse = "";
+  //   http.Response response;
 
-  //   final QuerySnapshot productQuerySnapshot = await FirebaseFirestore.instance
-  //       .collection('products')
-  //       .where('barcode', isEqualTo: barcodeString)
-  //       .get();
+  //   response = await http.get(Uri.parse(
+  //       "https://world.openfoodfacts.net/api/v2/product/$barcodeString?fields=additives_tags,allergens"));
 
-  //   if (productQuerySnapshot.docs.isNotEmpty) {
-  //     final DocumentSnapshot productSnapshot = productQuerySnapshot.docs.first;
+  //   if (response.statusCode == 200) {
   //     setState(() {
-  //       List<dynamic> additivesList =
-  //           (productSnapshot.data() as Map<String, dynamic>)['additives'];
-  //       additives = additivesList.join(',');
-  //       productStatus = "product found";
+  //       stringResponse = response.body.toString();
+  //       Map<String, dynamic> jsonMap = jsonDecode(stringResponse);
+  //       productStatus = jsonMap['status_verbose'];
+
+  //       if (productStatus == "product found") {
+  //         List<dynamic> additivesTags = jsonMap['product']['additives_tags'];
+  //         // additives = additivesTags.join(',');
+  //         additives = additivesTags.map((additive) {
+  //           String code = additive.toString().replaceAll("en:", "");
+  //           String capitalizedCode = code[0].toUpperCase() + code.substring(1);
+  //           return capitalizedCode;
+  //         }).join(',');
+  //         print("additives: $additives");
+  //       }
   //     });
   //   } else {
   //     setState(() {
@@ -88,6 +63,32 @@ class _MainScreenState extends State<MainScreen> {
   //     });
   //   }
   // }
+
+  Future apicall() async {
+    additives = "";
+    productStatus = "";
+    widget.OCRText = "";
+    // chatGPTResponse = "";
+
+    final QuerySnapshot productQuerySnapshot = await FirebaseFirestore.instance
+        .collection('products')
+        .where('barcode', isEqualTo: barcodeString)
+        .get();
+
+    if (productQuerySnapshot.docs.isNotEmpty) {
+      final DocumentSnapshot productSnapshot = productQuerySnapshot.docs.first;
+      setState(() {
+        List<dynamic> additivesList =
+            (productSnapshot.data() as Map<String, dynamic>)['additives'];
+        additives = additivesList.join(',');
+        productStatus = "product found";
+      });
+    } else {
+      setState(() {
+        productStatus = "product not found";
+      });
+    }
+  }
 
   @override
   void initState() {
